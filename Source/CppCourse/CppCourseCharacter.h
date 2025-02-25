@@ -7,6 +7,8 @@
 #include "Logging/LogMacros.h"
 #include "CppCourseCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewHealth);
+
 class UCameraComponent;
 class UInputAction;
 class UInputComponent;
@@ -23,7 +25,10 @@ class ACppCourseCharacter : public ACharacter
     GENERATED_BODY()
 
 public:
-    ACppCourseCharacter();
+    ACppCourseCharacter(); 
+
+    UPROPERTY(BlueprintAssignable)
+    FOnHealthChanged OnHealthChangedEvent;
 
     FORCEINLINE class USpringArmComponent* GetCameraBoom() const
     {
@@ -34,6 +39,9 @@ public:
     {
         return FollowCamera;
     }
+
+    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                                        class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
     /** Camera boom   the camera behind the character */
@@ -66,4 +74,9 @@ protected:
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+
+private:
+    const float MaxHealth = 100.0f;
+    float Health = MaxHealth;
+
 };

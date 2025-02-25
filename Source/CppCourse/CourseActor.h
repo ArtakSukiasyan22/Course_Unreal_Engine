@@ -7,7 +7,7 @@
 #include "CourseActor.generated.h"
 
 USTRUCT(BlueprintType)
-struct FItemInfo
+struct FCourseItemInfo
 {
     GENERATED_BODY()
 
@@ -18,6 +18,14 @@ struct FItemInfo
     UTexture2D* Texture;
 
     bool bTest;
+};
+
+UENUM(BlueprintType)
+enum class ECourseColor : uint8
+{
+    Red = 0 UMETA(DisplayName = "Color Red"),
+    Green,
+    Blue
 };
 
 UCLASS()
@@ -33,8 +41,11 @@ public:
     virtual void Tick(float DeltaTime) override;
 
 protected:
-    UPROPERTY(BlueprintReadWrite)
-    FItemInfo ItemInfo;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    ECourseColor color;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    FCourseItemInfo ItemInfo;
 
     UPROPERTY()
     UStaticMeshComponent* StaticMeshComponent;

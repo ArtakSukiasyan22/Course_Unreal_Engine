@@ -56,6 +56,15 @@ ACppCourseCharacter::ACppCourseCharacter()
     // are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+float ACppCourseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+                                                 AController* EventInstigator, AActor* DamageCauser)
+{
+    Health = FMath::Max(0, Health - DamageAmount);
+    OnHealthChangedEvent.Broadcast(Health);
+
+    return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
 void ACppCourseCharacter::NotifyControllerChanged()
 {
     Super::NotifyControllerChanged();
