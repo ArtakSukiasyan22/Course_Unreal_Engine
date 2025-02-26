@@ -16,4 +16,10 @@ public:
 private:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<UUserWidget> HUDWidget;
+
+    UPROPERTY(EditDefaultsOnly)
+    float DelayBeforAddingHUD = 2.0f;
+
+    UFUNCTION()
+    void AddHUDToViewport();
 };
