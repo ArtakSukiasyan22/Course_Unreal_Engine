@@ -56,12 +56,15 @@ ACppCourseCharacter::ACppCourseCharacter()
     // are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-float ACppCourseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-                                                 AController* EventInstigator, AActor* DamageCauser)
+float ACppCourseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+                                      AActor* DamageCauser)
 {
     Health = FMath::Max(0, Health - DamageAmount);
     OnHealthChangedEvent.Broadcast(Health);
-
+    if (!RecoveryTimerHandle.IsValid())
+    {
+        GetWorldTimerManager().SetTimer(RecoveryTimerHandle, this, &ThisClass::HealthRecover, RecoverTimerRate, true);
+    }
     return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -141,4 +144,18 @@ void ACppCourseCharacter::Look(const FInputActionValue& Value)
         AddControllerYawInput(LookAxisVector.X);
         AddControllerPitchInput(LookAxisVector.Y);
     }
+}
+
+void ACppCourseCharacter::HealthRecover()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Recover health"));
+    Health = FMath::Min(MaxHealth, Health + RecoverHealtPerTimerTick);
+    //if (Health >= MaxHealth)
+    if (FMath::IsNearlyEqual(Health, MaxHealth))
+    {
+        Health = MaxHealth;
+        GetWorldTimerManager().ClearTimer(RecoveryTimerHandle);
+    }
+
+    OnHealthChangedEvent.Broadcast(Health); // calling delagate
 }

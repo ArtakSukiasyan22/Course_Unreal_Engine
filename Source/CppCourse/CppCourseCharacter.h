@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Engine/TimerHandle.h"
 #include "Logging/LogMacros.h"
 #include "CppCourseCharacter.generated.h"
 
@@ -25,7 +26,7 @@ class ACppCourseCharacter : public ACharacter
     GENERATED_BODY()
 
 public:
-    ACppCourseCharacter(); 
+    ACppCourseCharacter();
 
     UPROPERTY(BlueprintAssignable)
     FOnHealthChanged OnHealthChangedEvent;
@@ -41,7 +42,7 @@ public:
     }
 
     virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                                        class AController* EventInstigator, AActor* DamageCauser) override;
+                             class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
     /** Camera boom   the camera behind the character */
@@ -77,6 +78,15 @@ protected:
 
 private:
     const float MaxHealth = 100.0f;
+
+    UPROPERTY(EditAnywhere,  Category = "Recover")
+    float RecoverTimerRate=0.5f;
+
+    UPROPERTY(EditAnywhere,  Category = "Recover")
+    float RecoverHealtPerTimerTick = 1.0f;
+
+    FTimerHandle RecoveryTimerHandle; 
     float Health = MaxHealth;
 
+    void HealthRecover();
 };
