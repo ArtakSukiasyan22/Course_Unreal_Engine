@@ -6,9 +6,13 @@
 #include "GameFramework/Character.h"
 #include "Engine/TimerHandle.h"
 #include "Logging/LogMacros.h"
+
+#include "Interface/HealthInterface.h"
+
 #include "CppCourseCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewHealth);
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, NewHealth);
 
 class UCameraComponent;
 class UInputAction;
@@ -21,16 +25,14 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS()
-class ACppCourseCharacter : public ACharacter
+class ACppCourseCharacter : public ACharacter, public IHealthInterface
 {
     GENERATED_BODY()
 
 public:
     ACppCourseCharacter();
 
-    UPROPERTY(BlueprintAssignable)
-    FOnHealthChanged OnHealthChangedEvent;
-
+  
     FORCEINLINE class USpringArmComponent* GetCameraBoom() const
     {
         return CameraBoom;
@@ -43,6 +45,12 @@ public:
 
     virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                              class AController* EventInstigator, AActor* DamageCauser) override;
+
+    virtual FOnHealthChanged& OnHealthChanged() override;
+    virtual float GetHealth() const override 
+    {
+        return Health;
+    }
 
 protected:
     /** Camera boom   the camera behind the character */
@@ -77,7 +85,10 @@ protected:
     void Look(const FInputActionValue& Value);
 
 private:
-    const float MaxHealth = 100.0f;
+    const float MaxHealth = 60.0f;
+
+    UPROPERTY(BlueprintAssignable)
+    FOnHealthChanged OnHealthChangedEvent;
 
     UPROPERTY(EditAnywhere,  Category = "Recover")
     float RecoverTimerRate=0.5f;
@@ -87,6 +98,7 @@ private:
 
     FTimerHandle RecoveryTimerHandle; 
     float Health = MaxHealth;
+
 
     void HealthRecover();
 };

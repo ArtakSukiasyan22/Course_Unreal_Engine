@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "InputActionValue.h"
 
+
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ACppCourseCharacter::ACppCourseCharacter()
@@ -66,6 +67,12 @@ float ACppCourseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
         GetWorldTimerManager().SetTimer(RecoveryTimerHandle, this, &ThisClass::HealthRecover, RecoverTimerRate, true);
     }
     return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+FOnHealthChanged& ACppCourseCharacter::OnHealthChanged()
+{
+    return OnHealthChangedEvent;
+
 }
 
 void ACppCourseCharacter::NotifyControllerChanged()
